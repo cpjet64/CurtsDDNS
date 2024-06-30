@@ -10,6 +10,7 @@ def load_config_file(filepath):
     config.read(filepath)
     return config
 
+
 # Load configuration
 config_file_path = os.path.join(os.path.dirname(__file__), 'config.ini')
 config = load_config_file(config_file_path)
@@ -18,9 +19,11 @@ CLOUDFLARE_API_TOKEN = config.get('cloudflare', 'CLOUDFLARE_API_TOKEN')
 CLOUDFLARE_ZONE_ID = config.get('cloudflare', 'CLOUDFLARE_ZONE_ID')
 CLOUDFLARE_RECORD_NAME = config.get('cloudflare', 'CLOUDFLARE_RECORD_NAME')
 
+
 def get_public_ip():
     response = requests.get('https://checkmyip.app/')
     return response.text.strip()
+
 
 def get_existing_dns_ip():
     headers = {
@@ -36,6 +39,7 @@ def get_existing_dns_ip():
         return response_data['result'][0]['content']
     else:
         raise Exception(f"Failed to fetch existing DNS record IP. Error: {response_data['errors']}")
+
 
 def update_dns(ip_address):
     headers = {

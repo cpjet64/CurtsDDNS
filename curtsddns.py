@@ -21,8 +21,6 @@ DNS_PROVIDER = config.get('settings', 'DNS_PROVIDER')
 # Import the appropriate module based on DNS_PROVIDER
 if DNS_PROVIDER == 'cloudflare':
     from cloudflare_module import get_public_ip, get_existing_dns_ip, update_dns
-elif DNS_PROVIDER == 'dynu':
-    from dynu_module import get_public_ip, get_existing_dns_ip, update_dns
 else:
     raise ValueError(f"Unsupported DNS provider: {DNS_PROVIDER}")
 
