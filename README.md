@@ -151,7 +151,14 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 
 ### Docker Setup
 
-1. Create a `Dockerfile` in the project root directory with the following content:
+1. **Clone the repository:**
+
+    ```sh
+    git clone https://github.com/cpjet64/curtsddns.git
+    cd curtsddns
+    ```
+
+2. **Create a `Dockerfile` in the project root directory with the following content:**
 
     ```Dockerfile
     # Use the official Python image from the Docker Hub
@@ -176,19 +183,23 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     CMD ["python", "curtsddns.py"]
     ```
 
-2. Create a `requirements.txt` file in the project root directory with the following content:
+3. **Create a `requirements.txt` file in the project root directory with the following content:**
 
     ```txt
-    requests
+    certifi==2024.6.2
+    charset-normalizer==3.3.2
+    idna==3.7
+    requests==2.32.3
+    urllib3==2.2.2
     ```
 
-3. Build the Docker image:
+4. **Build the Docker image:**
 
     ```sh
     docker build -t curtsddns .
     ```
 
-4. Run the Docker container:
+5. **Run the Docker container:**
 
     ```sh
     docker run -d --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
@@ -200,19 +211,19 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 
 ### Managing the Docker Container
 
-- To stop the container:
+- **To stop the container:**
 
     ```sh
     docker stop curtsddns
     ```
 
-- To start the container:
+- **To start the container:**
 
     ```sh
     docker start curtsddns
     ```
 
-- To view the container logs:
+- **To view the container logs:**
 
     ```sh
     docker logs curtsddns
@@ -224,7 +235,6 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 - You can customize the `Dockerfile` and Docker run command to suit your specific needs.
 
 By following these steps, you can easily run Curt's Dynamic DNS Updater in a Docker container, simplifying deployment and management.
-
 
 ## License
 
