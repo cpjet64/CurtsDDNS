@@ -1,13 +1,13 @@
 [Unit]
-Description=Curts DDNS Updater
+Description=Curt's Dynamic DNS Updater Service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /path/to/curtsddns.py
-WorkingDirectory=/path/to/
-Restart=always
-User=curt
-Environment=PYTHONUNBUFFERED=1
+Type=simple
+User=$(whoami)
+WorkingDirectory=$(pwd)
+ExecStart=$(pwd)/venv/bin/python $(pwd)/curtsddns.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

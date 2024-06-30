@@ -98,6 +98,24 @@ Copy the curtsddns.service file to /etc/systemd/system/:
 sudo cp curtsddns.service /etc/systemd/system/
 ```
 
+or
+
+```sh
+echo "[Unit]
+Description=Curt's Dynamic DNS Updater Service
+After=network.target
+
+[Service]
+Type=simple
+User=$(whoami)
+WorkingDirectory=$(pwd)
+ExecStart=$(pwd)/venv/bin/python $(pwd)/curtsddns.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target" | sudo tee /etc/systemd/system/curtsddns.service
+```
+
 Reload the systemd daemon:
 
 ```sh
