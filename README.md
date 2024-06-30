@@ -141,6 +141,91 @@ sudo systemctl start curtsddns
 * config.ini.example: Example configuration file.
 * curtsddns.service: Systemd service file for running the script as a service.
 
+## Dockerizing the App
+
+To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
+
+### Prerequisites
+
+- Docker installed on your system
+
+### Docker Setup
+
+1. Create a `Dockerfile` in the project root directory with the following content:
+
+    ```Dockerfile
+    # Use the official Python image from the Docker Hub
+    FROM python:3.12-slim
+
+    # Set the working directory in the container
+    WORKDIR /app
+
+    # Copy the requirements file into the container
+    COPY requirements.txt .
+
+    # Install the dependencies
+    RUN pip install --no-cache-dir -r requirements.txt
+
+    # Copy the rest of the application code into the container
+    COPY . .
+
+    # Set environment variables (if any)
+    ENV CHECK_INTERVAL=60
+
+    # Run the application
+    CMD ["python", "curtsddns.py"]
+    ```
+
+2. Create a `requirements.txt` file in the project root directory with the following content:
+
+    ```txt
+    requests
+    ```
+
+3. Build the Docker image:
+
+    ```sh
+    docker build -t curtsddns .
+    ```
+
+4. Run the Docker container:
+
+    ```sh
+    docker run -d --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
+    ```
+
+    - `-d` runs the container in detached mode.
+    - `--name curtsddns` gives the container a name.
+    - `-v $(pwd)/config.ini:/app/config.ini` mounts the `config.ini` file from the host to the container.
+
+### Managing the Docker Container
+
+- To stop the container:
+
+    ```sh
+    docker stop curtsddns
+    ```
+
+- To start the container:
+
+    ```sh
+    docker start curtsddns
+    ```
+
+- To view the container logs:
+
+    ```sh
+    docker logs curtsddns
+    ```
+
+### Notes
+
+- Ensure that the `config.ini` file is properly configured before running the container.
+- You can customize the `Dockerfile` and Docker run command to suit your specific needs.
+
+By following these steps, you can easily run Curt's Dynamic DNS Updater in a Docker container, simplifying deployment and management.
+
+
 ## License
 
 This project is licensed under the MIT License.
