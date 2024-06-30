@@ -1,0 +1,7 @@
+[settings]
+DNS_PROVIDER = cloudflare
+
+[cloudflare]
+CLOUDFLARE_API_TOKEN =
+CLOUDFLARE_ZONE_ID =
+CLOUDFLARE_RECORD_NAME =
