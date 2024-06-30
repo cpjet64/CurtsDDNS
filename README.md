@@ -157,40 +157,8 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     git clone https://github.com/cpjet64/curtsddns.git
     cd curtsddns
     ```
-
-2. **Create a `Dockerfile` in the project root directory with the following content:**
-
-    ```Dockerfile
-    # Use the official Python image from the Docker Hub
-    FROM python:3.12-slim
-
-    # Set the working directory in the container
-    WORKDIR /app
-
-    # Copy the requirements file into the container
-    COPY requirements.txt .
-
-    # Install the dependencies
-    RUN pip install --no-cache-dir -r requirements.txt
-
-    # Copy the rest of the application code into the container
-    COPY . .
-
-    # Run the application
-    CMD ["python", "curtsddns.py"]
-    ```
-
-3. **Create a `requirements.txt` file in the project root directory with the following content:**
-
-    ```txt
-    certifi==2024.6.2
-    charset-normalizer==3.3.2
-    idna==3.7
-    requests==2.32.3
-    urllib3==2.2.2
-    ```
    
-4. **Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:**
+2. **Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:**
     ```sh
     cp config.ini.example config.ini
     ```
@@ -208,13 +176,13 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
    CLOUDFLARE_RECORD_NAME = your_dns_record_name
    ```
 
-5. **Build the Docker image:**
+3. **Build the Docker image:**
 
     ```sh
     docker build -t curtsddns .
     ```
 
-6. **Run the Docker container:**
+4. **Run the Docker container:**
 
     ```sh
     docker run -d --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
@@ -242,6 +210,11 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 
     ```sh
     docker logs curtsddns
+    ```
+- **To remove the container:**
+
+    ```sh
+    docker rm curtsddns
     ```
 
 ### Notes
