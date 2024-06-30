@@ -176,9 +176,6 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     # Copy the rest of the application code into the container
     COPY . .
 
-    # Set environment variables (if any)
-    ENV CHECK_INTERVAL=60
-
     # Run the application
     CMD ["python", "curtsddns.py"]
     ```
