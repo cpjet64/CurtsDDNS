@@ -18,51 +18,51 @@ Curt's Dynamic DNS Updater is a Python script designed to update DNS records aut
 
 ### Installing Python 3.12 on Debian-based Systems
 
-1. Update your package list:
+1. **Update your package list:**
     ```sh
     sudo apt update
     ```
 
-2. Install dependencies:
+2. **Install dependencies:**
     ```sh
     sudo apt install -y software-properties-common
     ```
 
-3. Add the deadsnakes PPA:
+3. **Add the deadsnakes PPA:**
     ```sh
     sudo add-apt-repository ppa:deadsnakes/ppa
     sudo apt update
     ```
 
-4. Install Python 3.12:
+4. **Install Python 3.12:**
     ```sh
     sudo apt install -y python3.12 python3.12-venv python3.12-dev
     ```
 
 ### Setting Up the Project
 
-1. Clone the repository:
+1. **Clone the repository:**
     ```sh
     git clone https://github.com/cpjet64/curtsddns.git
     cd curtsddns
     ```
 
-2. Create a virtual environment:
+2. **Create a virtual environment:**
     ```sh
     python3.12 -m venv venv
     ```
 
-3. Activate the virtual environment:
+3. **Activate the virtual environment:**
     ```sh
     source venv/bin/activate
     ```
 
-4. Install the required dependencies:
+4. **Install the required dependencies:**
     ```sh
     pip install requests
     ```
 
-5. Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:
+5. **Configure your DNS settings in the `config.ini` file using `config.ini.example` as a template:**
     ```sh
     cp config.ini.example config.ini
     ```
@@ -93,16 +93,16 @@ python curtsddns.py
 
 For continuous operation, you can set up a systemd service:
 
-Copy the curtsddns.service file to /etc/systemd/system/ and then modify as needed:
+**Copy the curtsddns.service file to /etc/systemd/system/ and then modify as needed:**
 
 ```sh
 sudo cp curtsddns.service /etc/systemd/system/
 sudo nano /etc/systemd/system/curtsddns.service
 ```
 
-### OR 
+## OR 
 
-Have the file created for you using the current user and file location:
+**Have the file created for you using the current user and file location:**
 
 ```sh
 echo "[Unit]
@@ -120,13 +120,13 @@ Restart=on-failure
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/curtsddns.service
 ```
 
-Reload the systemd daemon:
+**Reload the systemd daemon:**
 
 ```sh
 sudo systemctl daemon-reload
 ```
 
-Enable and start the service:
+**Enable and start the service:**
 
 ```sh
 sudo systemctl enable curtsddns
@@ -135,11 +135,12 @@ sudo systemctl start curtsddns
 
 ## Files
 
-* curtsddns.py: Main script for updating DNS records.
-* cloudflare_module.py: Module for handling Cloudflare DNS updates.
-* config.ini: Configuration file (create from config.ini.example).
-* config.ini.example: Example configuration file.
-* curtsddns.service: Systemd service file for running the script as a service.
+* **curtsddns.py**: Main script for updating DNS records.
+* **cloudflare_module.py**: Module for handling Cloudflare DNS updates.
+* **config.ini**: Configuration file (create from config.ini.example).
+* **config.ini.example**: Example configuration file.
+* **curtsddns.service**: Systemd service file for running the script as a service.
+* **Dockerfile**:Docker configuration file.
 
 ## Dockerizing the App
 
@@ -158,7 +159,7 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     cd curtsddns
     ```
    
-2. **Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:**
+2. **Configure your DNS settings in the `config.ini` file using `config.ini.example` as a template:**
 
     ```sh
     cp config.ini.example config.ini
