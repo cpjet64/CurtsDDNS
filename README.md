@@ -1,6 +1,6 @@
 # Curt's Dynamic DNS Updater
 
-Curt's Dynamic DNS Updater is a Python script designed to update DNS records automatically for dynamic IP addresses. This solution supports multiple DNS providers including Cloudflare and Dynu.
+Curt's Dynamic DNS Updater is a Python script designed to update DNS records automatically for dynamic IP addresses. This solution supports multiple DNS providers including Cloudflare.
 
 ## Features
 
@@ -11,23 +11,58 @@ Curt's Dynamic DNS Updater is a Python script designed to update DNS records aut
 
 ## Requirements
 
-- Python 3.x
+- Python 3.12
 - `requests` library
 
 ## Installation
 
+### Installing Python 3.12 on Debian-based Systems
+
+1. Update your package list:
+    ```sh
+    sudo apt update
+    ```
+
+2. Install dependencies:
+    ```sh
+    sudo apt install -y software-properties-common
+    ```
+
+3. Add the deadsnakes PPA:
+    ```sh
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt update
+    ```
+
+4. Install Python 3.12:
+    ```sh
+    sudo apt install -y python3.12 python3.12-venv python3.12-dev
+    ```
+
+### Setting Up the Project
+
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/curtsddns.git
+    git clone https://github.com/cpjet64/curtsddns.git
     cd curtsddns
     ```
 
-2. Install the required dependencies:
+2. Create a virtual environment:
+    ```sh
+    python3.12 -m venv venv
+    ```
+
+3. Activate the virtual environment:
+    ```sh
+    source venv/bin/activate
+    ```
+
+4. Install the required dependencies:
     ```sh
     pip install requests
     ```
 
-3. Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:
+5. Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:
     ```sh
     cp config.ini.example config.ini
     ```
@@ -44,3 +79,53 @@ DNS_PROVIDER = cloudflare
 CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
 CLOUDFLARE_ZONE_ID = your_cloudflare_zone_id
 CLOUDFLARE_RECORD_NAME = your_dns_record_name
+```
+
+## Usage
+
+To start the script, simply run:
+
+```sh
+python curtsddns.py
+```
+## Systemd Service
+
+For continuous operation, you can set up a systemd service:
+Copy the curtsddns.service file to /etc/systemd/system/:
+
+```sh
+sudo cp curtsddns.service /etc/systemd/system/
+```
+
+Reload the systemd daemon:
+
+```sh
+sudo systemctl daemon-reload
+```
+
+Enable and start the service:
+
+```sh
+sudo systemctl enable curtsddns
+sudo systemctl start curtsddns
+```
+
+## Files
+
+* curtsddns.py: Main script for updating DNS records.
+* cloudflare_module.py: Module for handling Cloudflare DNS updates.
+* config.ini: Configuration file (create from config.ini.example).
+* config.ini.example: Example configuration file.
+* curtsddns.service: Systemd service file for running the script as a service.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request.
+
+## Contact
+
+For support or inquiries, please contact Curt at curt@curtpme.com.
