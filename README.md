@@ -92,13 +92,17 @@ python curtsddns.py
 ## Systemd Service
 
 For continuous operation, you can set up a systemd service:
-Copy the curtsddns.service file to /etc/systemd/system/:
+
+Copy the curtsddns.service file to /etc/systemd/system/ and then modify as needed:
 
 ```sh
 sudo cp curtsddns.service /etc/systemd/system/
+sudo nano /etc/systemd/system/curtsddns.service
 ```
 
-or
+### OR 
+
+Have the file created for you using the current user and file location:
 
 ```sh
 echo "[Unit]
