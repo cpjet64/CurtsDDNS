@@ -1,5 +1,7 @@
 # Curt's Dynamic DNS Updater
 
+[![Python package](https://github.com/cpjet64/CurtsDDNS/actions/workflows/python-package.yml/badge.svg?branch=main)](https://github.com/cpjet64/CurtsDDNS/actions/workflows/python-package.yml)
+
 Curt's Dynamic DNS Updater is a Python script designed to update DNS records automatically for dynamic IP addresses. This solution supports multiple DNS providers including Cloudflare.
 
 ## Features
