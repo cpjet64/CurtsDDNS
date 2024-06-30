@@ -189,14 +189,32 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     requests==2.32.3
     urllib3==2.2.2
     ```
+   
+4. **Configure your DNS settings in the `config.ini` file. You can use `config.ini.example` as a template:**
+    ```sh
+    cp config.ini.example config.ini
+    ```
 
-4. **Build the Docker image:**
+   The `config.ini` file should be structured as follows:
+
+   ```ini
+   [settings]
+   DNS_PROVIDER = cloudflare
+   CHECK_INTERVAL = 60
+
+   [cloudflare]
+   CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
+   CLOUDFLARE_ZONE_ID = your_cloudflare_zone_id
+   CLOUDFLARE_RECORD_NAME = your_dns_record_name
+   ```
+
+5. **Build the Docker image:**
 
     ```sh
     docker build -t curtsddns .
     ```
 
-5. **Run the Docker container:**
+6. **Run the Docker container:**
 
     ```sh
     docker run -d --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
