@@ -1,4 +1,3 @@
-# curtsddns.py
 import configparser
 import os
 import time
@@ -17,6 +16,7 @@ config_file_path = os.path.join(os.path.dirname(__file__), 'config.ini')
 config = load_config_file(config_file_path)
 
 DNS_PROVIDER = config.get('settings', 'DNS_PROVIDER')
+CHECK_INTERVAL = config.getint('settings', 'CHECK_INTERVAL', fallback=60)
 
 # Import the appropriate module based on DNS_PROVIDER
 if DNS_PROVIDER == 'cloudflare':
@@ -45,7 +45,7 @@ def main():
         except Exception as e:
             print(f"Error occurred: {e}")
 
-        time.sleep(60)  # Check again in 1 minute
+        time.sleep(CHECK_INTERVAL)  # Check again based on the interval in config
 
 
 if __name__ == '__main__':

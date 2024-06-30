@@ -74,6 +74,7 @@ The `config.ini` file should be structured as follows:
 ```ini
 [settings]
 DNS_PROVIDER = cloudflare
+CHECK_INTERVAL = 60
 
 [cloudflare]
 CLOUDFLARE_API_TOKEN = your_cloudflare_api_token

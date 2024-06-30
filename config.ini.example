@@ -1,5 +1,6 @@
 [settings]
 DNS_PROVIDER = cloudflare
+CHECK_INTERVAL = 60
 
 [cloudflare]
 CLOUDFLARE_API_TOKEN =
