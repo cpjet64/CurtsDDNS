@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run the application
-CMD ["python", "curtsddns.py"]
+CMD ["python", "-u", "curtsddns.py"]

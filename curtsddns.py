@@ -14,10 +14,8 @@ def load_config_file(filepath):
 # Load configuration
 config_file_path = os.path.join(os.path.dirname(__file__), 'config.ini')
 config = load_config_file(config_file_path)
-
 DNS_PROVIDER = config.get('settings', 'DNS_PROVIDER')
 CHECK_INTERVAL = config.getint('settings', 'CHECK_INTERVAL', fallback=60)
-
 # Import the appropriate module based on DNS_PROVIDER
 if DNS_PROVIDER == 'cloudflare':
     from cloudflare_module import get_public_ip, get_existing_dns_ip, update_dns
@@ -30,21 +28,28 @@ def main():
         try:
             public_ip = get_public_ip()
             existing_ip = get_existing_dns_ip()
-
             print(f"Current DNS record: {existing_ip}")
-
+            print(f"Current IP address: {public_ip}")
             if public_ip != existing_ip:
+                print("IP address and DNS record do not match. Starting update.")
                 result = update_dns(public_ip)
-                if result['status'] == 'success':
-                    print(f"Successfully updated DNS record to {public_ip}")
+                if result:
+                    try:
+                        if result['status'] == 'success':
+                            print(f"Successfully updated DNS record to {public_ip}")
+                        else:
+                            print("Failed to update DNS record.")
+                            print(f"Error: {result.get('message', 'No message provided')}")
+                    except KeyError as e:
+                        print("Failed to update DNS record.")
+                        print(f"Reason: The update_dns(public_ip) function returned dictionary without {e} field.")
                 else:
                     print("Failed to update DNS record.")
-                    print(f"Error: {result['message']}")
+                    print("Reason: The update_dns(public_ip) function returned None or an unexpected value.")
             else:
-                print("IP address has not changed.")
+                print("IP address and DNS record match. No updates needed.")
         except Exception as e:
-            print(f"Error occurred: {e}")
-
+            print(f"An error occurred during the operation: {str(e)}")
         time.sleep(CHECK_INTERVAL)  # Check again based on the interval in config
 
 

@@ -194,7 +194,7 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 4. **Run the Docker container:**
 
     ```sh
-    docker run -d --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
+    docker run -d --restart unless-stopped --name curtsddns -v $(pwd)/config.ini:/app/config.ini curtsddns
     ```
 
     - `-d` runs the container in detached mode.

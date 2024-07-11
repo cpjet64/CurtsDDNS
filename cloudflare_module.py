@@ -66,6 +66,12 @@ def update_dns(ip_address):
 
         update_url = f'https://api.cloudflare.com/client/v4/zones/{CLOUDFLARE_ZONE_ID}/dns_records/{record_id}'
         update_response = requests.put(update_url, headers=headers, json=dns_data)
-        return update_response.json()
+        update_response_data = update_response.json()
+
+        if update_response_data["success"]:
+            return {'status': 'success', 'message': 'DNS updated successfully'}
+        else:
+            return {'status': 'failure', 'message': f"Failed to update DNS. Error: {update_response_data['errors']}"}
     else:
-        return response_data
+        return {'status': 'failure',
+                'message': f"Failed to fetch existing DNS record ID. Error: {response_data['errors']}"}
