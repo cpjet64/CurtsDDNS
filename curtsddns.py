@@ -67,6 +67,9 @@ def _auto_update_check_available() -> bool:
     the directory is not a git repo, this will safely return False.
     """
     try:
+        logger.info(
+            "Auto-update: checking for new version (comparing local HEAD to origin/HEAD)."
+        )
         local_sha = subprocess.check_output(
             ['git', 'rev-parse', 'HEAD'],
             text=True,
@@ -87,6 +90,12 @@ def _auto_update_check_available() -> bool:
             )
             return True
 
+        logger.info(
+            "Auto-update: no new version available "
+            "(local %s matches remote %s).",
+            local_sha,
+            remote_sha,
+        )
         return False
     except Exception as e:
         logger.warning("Auto-update: git check failed: %s", e)
