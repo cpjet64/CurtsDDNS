@@ -50,6 +50,7 @@ if not logger.handlers:
 
 # Timestamp of the last auto-update check (seconds since epoch)
 last_update_check = 0.0
+
 # Import the appropriate module based on DNS_PROVIDER
 if DNS_PROVIDER == 'cloudflare':
     from cloudflare_module import get_public_ip, get_existing_dns_ip, update_dns
@@ -127,7 +128,9 @@ def main():
             logger.info("Current DNS record: %s", existing_ip)
             logger.info("Current IP address: %s", public_ip)
             if public_ip != existing_ip:
-                logger.info("IP address and DNS record do not match. Starting update.")
+                logger.warning(
+                    "IP address and DNS record do not match. Starting update."
+                )
                 result = update_dns(public_ip)
                 if result:
                     try:
@@ -163,4 +166,25 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    logger.info(
+        "Curt's DDNS starting "
+        "(provider=%s, interval=%s, auto_update=%s, auto_update_interval=%s)",
+        DNS_PROVIDER,
+        CHECK_INTERVAL,
+        AUTO_UPDATE,
+        AUTO_UPDATE_INTERVAL,
+    )
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.info("Curt's DDNS shutting down due to KeyboardInterrupt.")
+    except SystemExit:
+        logger.info("Curt's DDNS shutting down due to SystemExit.")
+        raise
+    except BaseException as exc:  # pragma: no cover - defensive catch-all
+        logger.exception(
+            "Curt's DDNS exiting due to unexpected error: %s", exc
+        )
+        raise
+    else:
+        logger.info("Curt's DDNS main loop exited normally; shutting down.")

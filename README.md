@@ -8,6 +8,8 @@ Curt's Dynamic DNS Updater is a Python script designed to update DNS records aut
 - Support for multiple DNS providers
 - Configurable via an INI file
 - Runs continuously with a configurable check interval
+- Optional self‑updater that pulls new versions from Git
+- Rotating log file with configurable path, level, and size
 
 ## Requirements
 
@@ -74,15 +76,15 @@ The `config.ini` file should be structured as follows:
 ```ini
 [settings]
 DNS_PROVIDER = cloudflare
-CHECK_INTERVAL = 60
-AUTO_UPDATE = false
-AUTO_UPDATE_INTERVAL = 3600
+CHECK_INTERVAL = 60               ; seconds between DNS checks
+AUTO_UPDATE = false               ; enable/disable Git-based self-update
+AUTO_UPDATE_INTERVAL = 3600       ; seconds between update checks
 
 [logging]
-LOG_FILE = curtsddns.log
-LOG_LEVEL = INFO
-LOG_MAX_BYTES = 1048576
-LOG_BACKUP_COUNT = 5
+LOG_FILE = curtsddns.log          ; path to log file (absolute or relative)
+LOG_LEVEL = INFO                  ; DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOG_MAX_BYTES = 1048576           ; max size in bytes before rotation
+LOG_BACKUP_COUNT = 5              ; how many rotated files to keep
 
 [cloudflare]
 CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
@@ -248,6 +250,47 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
 - You can customize the `Dockerfile` and Docker run command to suit your specific needs.
 
 By following these steps, you can easily run Curt's Dynamic DNS Updater in a Docker container, simplifying deployment and management.
+
+## Auto‑update behavior
+
+Curt's DDNS can optionally keep itself up to date by pulling the latest changes from the Git remote and restarting the process.
+
+- The auto‑updater is **disabled by default**. Enable it via `config.ini`:
+  ```ini
+  [settings]
+  AUTO_UPDATE = true
+  AUTO_UPDATE_INTERVAL = 3600
+  ```
+- Requirements:
+  - The app must be running from a **git clone** of this repository.
+  - A remote named `origin` must point to your GitHub repo.
+  - `git` must be installed and available in `PATH` for the service user.
+- Behavior:
+  - Every `AUTO_UPDATE_INTERVAL` seconds, the app compares the local `HEAD` to `origin/HEAD`.
+  - If different, it runs `git pull --ff-only` and then re‑execs the Python process (`os.execv`) so the new code is loaded.
+  - All actions and failures are logged via the configured logger.
+- Recommendation:
+  - Use an interval of **at least 1 hour** (`3600`) to avoid unnecessary traffic.
+
+If auto‑update fails (no network, git error, etc.), the app logs a warning/error and continues running with the existing code.
+
+## Logging and rotation
+
+The service uses Python's `logging` with a `RotatingFileHandler`:
+
+- Configuration (in `config.ini`):
+  ```ini
+  [logging]
+  LOG_FILE = /var/log/curtsddns.log
+  LOG_LEVEL = INFO
+  LOG_MAX_BYTES = 1048576
+  LOG_BACKUP_COUNT = 5
+  ```
+- `LOG_FILE` can be absolute (e.g. `/var/log/curtsddns.log`) or relative to the app directory.
+- When the log file reaches `LOG_MAX_BYTES`, it rotates and keeps up to `LOG_BACKUP_COUNT` old files.
+- Logs are written both to the file and to stdout/stderr, so they also appear in `journalctl` when run under systemd.
+
+Make sure the service user has write permissions to the directory containing `LOG_FILE` (e.g. `chown` or adjust the path).
 
 ## License
 
