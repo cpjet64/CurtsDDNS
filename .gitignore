@@ -2,3 +2,4 @@ config.ini
 __pycache__/
 venv/
 
+curtsddns.log
