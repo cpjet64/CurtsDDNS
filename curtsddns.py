@@ -1,4 +1,6 @@
 import configparser
+import logging
+from logging.handlers import RotatingFileHandler
 import os
 import subprocess
 import sys
@@ -20,6 +22,31 @@ DNS_PROVIDER = config.get('settings', 'DNS_PROVIDER')
 CHECK_INTERVAL = config.getint('settings', 'CHECK_INTERVAL', fallback=60)
 AUTO_UPDATE = config.getboolean('settings', 'AUTO_UPDATE', fallback=False)
 AUTO_UPDATE_INTERVAL = config.getint('settings', 'AUTO_UPDATE_INTERVAL', fallback=3600)
+LOG_FILE = config.get('logging', 'LOG_FILE', fallback='curtsddns.log')
+LOG_LEVEL = config.get('logging', 'LOG_LEVEL', fallback='INFO').upper()
+LOG_MAX_BYTES = config.getint('logging', 'LOG_MAX_BYTES', fallback=1048576)
+LOG_BACKUP_COUNT = config.getint('logging', 'LOG_BACKUP_COUNT', fallback=5)
+
+logger = logging.getLogger('curtsddns')
+if not logger.handlers:
+    level = getattr(logging, LOG_LEVEL, logging.INFO)
+    logger.setLevel(level)
+
+    log_path = os.path.join(os.path.dirname(__file__), LOG_FILE)
+    file_handler = RotatingFileHandler(
+        log_path,
+        maxBytes=LOG_MAX_BYTES,
+        backupCount=LOG_BACKUP_COUNT,
+    )
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s %(message)s'
+    )
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
 
 # Timestamp of the last auto-update check (seconds since epoch)
 last_update_check = 0.0
@@ -52,16 +79,16 @@ def _auto_update_check_available() -> bool:
         remote_sha = remote_output.split()[0]
 
         if local_sha != remote_sha:
-            print(
-                f"Auto-update: new version detected "
-                f"(local {local_sha}, remote {remote_sha})."
+            logger.info(
+                "Auto-update: new version detected (local %s, remote %s).",
+                local_sha,
+                remote_sha,
             )
             return True
 
         return False
     except Exception as e:
-        # Any error here should not break DNS updates; just log and continue.
-        print(f"Auto-update: git check failed: {e}")
+        logger.warning("Auto-update: git check failed: %s", e)
         return False
 
 
@@ -77,10 +104,10 @@ def _auto_update_apply_and_restart() -> None:
             ['git', 'pull', '--ff-only'],
             stderr=subprocess.STDOUT,
         )
-        print("Auto-update: update applied successfully, restarting process.")
+        logger.info("Auto-update: update applied successfully, restarting process.")
         os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
-        print(f"Auto-update: git pull or restart failed: {e}")
+        logger.error("Auto-update: git pull or restart failed: %s", e)
 
 
 def main():
@@ -97,28 +124,41 @@ def main():
 
             public_ip = get_public_ip()
             existing_ip = get_existing_dns_ip()
-            print(f"Current DNS record: {existing_ip}")
-            print(f"Current IP address: {public_ip}")
+            logger.info("Current DNS record: %s", existing_ip)
+            logger.info("Current IP address: %s", public_ip)
             if public_ip != existing_ip:
-                print("IP address and DNS record do not match. Starting update.")
+                logger.info("IP address and DNS record do not match. Starting update.")
                 result = update_dns(public_ip)
                 if result:
                     try:
                         if result['status'] == 'success':
-                            print(f"Successfully updated DNS record to {public_ip}")
+                            logger.info(
+                                "Successfully updated DNS record to %s",
+                                public_ip,
+                            )
                         else:
-                            print("Failed to update DNS record.")
-                            print(f"Error: {result.get('message', 'No message provided')}")
+                            logger.error("Failed to update DNS record.")
+                            logger.error(
+                                "Error: %s",
+                                result.get('message', 'No message provided'),
+                            )
                     except KeyError as e:
-                        print("Failed to update DNS record.")
-                        print(f"Reason: The update_dns(public_ip) function returned dictionary without {e} field.")
+                        logger.error("Failed to update DNS record.")
+                        logger.error(
+                            "Reason: the update_dns(public_ip) function "
+                            "returned dictionary without %s field.",
+                            e,
+                        )
                 else:
-                    print("Failed to update DNS record.")
-                    print("Reason: The update_dns(public_ip) function returned None or an unexpected value.")
+                    logger.error("Failed to update DNS record.")
+                    logger.error(
+                        "Reason: the update_dns(public_ip) function returned "
+                        "None or an unexpected value.",
+                    )
             else:
-                print("IP address and DNS record match. No updates needed.")
+                logger.info("IP address and DNS record match. No updates needed.")
         except Exception as e:
-            print(f"An error occurred during the operation: {str(e)}")
+            logger.exception("An error occurred during the operation: %s", e)
         time.sleep(CHECK_INTERVAL)  # Check again based on the interval in config
 
 

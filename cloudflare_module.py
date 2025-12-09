@@ -1,10 +1,14 @@
 # cloudflare_module.py
 import configparser
 import ipaddress
+import logging
 import os
 from typing import List
 
 import requests
+
+
+logger = logging.getLogger('curtsddns')
 
 
 def load_config_file(filepath):
@@ -139,9 +143,11 @@ def get_public_ip():
             candidate_ip = text.split()[0]
 
             if not _is_public_non_cloudflare_ipv4(candidate_ip):
-                print(
-                    f"Rejected IP candidate '{candidate_ip}' from {url} "
-                    f"(not a suitable public, non-Cloudflare IPv4 address)."
+                logger.warning(
+                    "Rejected IP candidate '%s' from %s "
+                    "(not a suitable public, non-Cloudflare IPv4 address).",
+                    candidate_ip,
+                    url,
                 )
                 continue
 

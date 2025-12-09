@@ -78,6 +78,12 @@ CHECK_INTERVAL = 60
 AUTO_UPDATE = false
 AUTO_UPDATE_INTERVAL = 3600
 
+[logging]
+LOG_FILE = curtsddns.log
+LOG_LEVEL = INFO
+LOG_MAX_BYTES = 1048576
+LOG_BACKUP_COUNT = 5
+
 [cloudflare]
 CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
 CLOUDFLARE_ZONE_ID = your_cloudflare_zone_id
@@ -181,6 +187,12 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     CHECK_INTERVAL = 60
     AUTO_UPDATE = false
     AUTO_UPDATE_INTERVAL = 3600
+
+    [logging]
+    LOG_FILE = curtsddns.log
+    LOG_LEVEL = INFO
+    LOG_MAX_BYTES = 1048576
+    LOG_BACKUP_COUNT = 5
     
     [cloudflare]
     CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
