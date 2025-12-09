@@ -75,6 +75,8 @@ The `config.ini` file should be structured as follows:
 [settings]
 DNS_PROVIDER = cloudflare
 CHECK_INTERVAL = 60
+AUTO_UPDATE = false
+AUTO_UPDATE_INTERVAL = 3600
 
 [cloudflare]
 CLOUDFLARE_API_TOKEN = your_cloudflare_api_token
@@ -177,6 +179,8 @@ To run Curt's Dynamic DNS Updater in a Docker container, follow these steps:
     [settings]
     DNS_PROVIDER = cloudflare
     CHECK_INTERVAL = 60
+    AUTO_UPDATE = false
+    AUTO_UPDATE_INTERVAL = 3600
     
     [cloudflare]
     CLOUDFLARE_API_TOKEN = your_cloudflare_api_token

@@ -1,6 +1,8 @@
 [settings]
 DNS_PROVIDER = cloudflare
 CHECK_INTERVAL = 60
+AUTO_UPDATE = false
+AUTO_UPDATE_INTERVAL = 3600
 
 [cloudflare]
 CLOUDFLARE_API_TOKEN =
