@@ -183,6 +183,13 @@ if __name__ == '__main__':
         AUTO_UPDATE,
         AUTO_UPDATE_INTERVAL,
     )
+    if not AUTO_UPDATE:
+        logger.info("Auto-update is disabled in config; no update checks will run.")
+    else:
+        logger.info(
+            "Auto-update is enabled; checking every %s seconds.",
+            AUTO_UPDATE_INTERVAL,
+        )
     try:
         main()
     except KeyboardInterrupt:

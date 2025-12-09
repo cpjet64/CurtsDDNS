@@ -51,9 +51,18 @@ def _load_cloudflare_ipv4_networks() -> List[ipaddress.IPv4Network]:
         data = response.json()
         result = data.get("result", {})
         cidrs = result.get("ipv4_cidrs", []) or []
-    except Exception:
+        logger.info(
+            "Loaded %d Cloudflare IPv4 CIDR ranges from /ips API.",
+            len(cidrs),
+        )
+    except Exception as exc:
         # Fallback to the documented IPv4 ranges from
         # https://www.cloudflare.com/ips/
+        logger.warning(
+            "Failed to load Cloudflare IPv4 ranges from /ips API (%s); "
+            "using static fallback list.",
+            exc,
+        )
         cidrs = [
             "173.245.48.0/20",
             "103.21.244.0/22",
@@ -136,6 +145,7 @@ def get_public_ip():
 
     for url in endpoints:
         try:
+            logger.debug("Public IP detection: trying endpoint %s", url)
             response = requests.get(url, timeout=10)
             response.raise_for_status()
             text = response.text.strip()
@@ -172,11 +182,27 @@ def get_existing_dns_ip():
         f"https://api.cloudflare.com/client/v4/zones/"
         f"{CLOUDFLARE_ZONE_ID}/dns_records?type=A&name={CLOUDFLARE_RECORD_NAME}"
     )
+    logger.info(
+        "Fetching existing DNS record IP (zone_id=%s, name=%s).",
+        CLOUDFLARE_ZONE_ID,
+        CLOUDFLARE_RECORD_NAME,
+    )
     response = requests.get(url, headers=headers)
     response_data = response.json()
 
     if response_data["success"]:
-        return response_data["result"][0]["content"]
+        results = response_data.get("result") or []
+        if not results:
+            logger.warning(
+                "No DNS records found for name=%s in zone_id=%s.",
+                CLOUDFLARE_RECORD_NAME,
+                CLOUDFLARE_ZONE_ID,
+            )
+            raise Exception(
+                "DNS lookup succeeded but no records were returned "
+                f"for {CLOUDFLARE_RECORD_NAME} in zone {CLOUDFLARE_ZONE_ID}."
+            )
+        return results[0]["content"]
     else:
         raise Exception(
             f"Failed to fetch existing DNS record IP. "
@@ -189,6 +215,13 @@ def update_dns(ip_address):
         "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
         "Content-Type": "application/json",
     }
+
+    logger.info(
+        "Updating DNS record (zone_id=%s, name=%s) to IP %s.",
+        CLOUDFLARE_ZONE_ID,
+        CLOUDFLARE_RECORD_NAME,
+        ip_address,
+    )
 
     # Get the DNS record ID
     url = (
